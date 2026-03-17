@@ -145,3 +145,145 @@ app.post(
   }),
 );
 ```
+---
+
+# #3: Very Important Concept about (err) Object
+
+# 🧠 Where does `err` come from in Express?
+
+---
+
+## 📌 Core Idea
+
+let { statusCode, message } = err;
+
+👉 The `err` object is **automatically passed by Express** when an error occurs.
+
+But Express only gets it in **two ways**:
+
+---
+
+## 🔴 1. When you `throw` an error
+
+app.get("/user", (req, res) => {
+  throw new ExpressError(404, "User not found");
+});
+
+### 🧠 What happens internally:
+
+1. You `throw` error  
+2. Express catches it  
+3. Express **passes it as `err`** to your error middleware  
+
+👉 So inside middleware:
+
+err = new ExpressError(404, "User not found");
+
+---
+
+## 🔵 2. When you call `next(err)`
+
+app.get("/user", (req, res, next) => {
+  const err = new ExpressError(500, "Server issue");
+  next(err);
+});
+
+👉 Here YOU manually send the error to Express
+
+---
+
+## 🔗 Now connect everything
+
+### 📌 Your class:
+
+class ExpressError extends Error {
+  constructor(statusCode, message) {
+    super(message);
+    this.statusCode = statusCode;
+  }
+}
+
+---
+
+### 📌 When you create error:
+
+throw new ExpressError(404, "User not found");
+
+👉 That object looks like:
+
+err = {
+  statusCode: 404,
+  message: "User not found"
+}
+
+---
+
+### 📌 Then in middleware:
+
+app.use((err, req, res, next) => {
+  let { statusCode, message } = err;
+  res.status(statusCode).send(message);
+});
+
+👉 Now it works because:
+- err.statusCode → 404  
+- err.message → "User not found"  
+
+---
+
+## 🔥 Full Flow (Super Important)
+
+You throw error  
+     ↓  
+Express catches it  
+     ↓  
+Express sends it as `err`  
+     ↓  
+Error middleware receives it  
+     ↓  
+You extract values from `err`  
+     ↓  
+Send response  
+
+---
+
+## ⚠️ Important thing beginners miss
+
+If you do this:
+
+throw new Error("Something broke");
+
+👉 Then:
+
+err = {
+  message: "Something broke"
+}
+
+❌ No `statusCode`
+
+---
+
+### ✅ So you use default:
+
+let { statusCode = 500 } = err;
+
+---
+
+## 🧩 Simple Analogy
+
+- You = person reporting problem  
+- ExpressError = structured complaint form  
+- Express = delivery system  
+- err = complaint reaching manager (middleware)  
+
+---
+
+## ✅ Final Answer (Simple)
+
+👉 Value enters `err` because:
+
+- You create an error using `throw` or `next(err)`  
+- Express automatically forwards that error to middleware  
+- That error object becomes `err`  
+
+---
