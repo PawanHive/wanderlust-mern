@@ -344,3 +344,131 @@ error in styled manner %>
 </div>
 ```
 Error basically styled here in good manner which feel appealing for client
+
+# #5: Server-side Validation for Schema with Joi Package:
+
+## 1. Joi Package:
+
+### 1️⃣ What is Joi?
+
+- Joi is a JavaScript object schema validation library.
+- Used primarily in Node.js/Express for server-side validation.
+- Helps ensure incoming data (req.body, query, params) matches expected format before processing.
+- Avoids writing manual if-statements for every field.
+
+**Install**:
+> npm i joi
+
+**Them Import in schema.js**
+```js
+ const Joi = require("joi");  // standard convention
+```
+
+**schema.js**:
+```js
+// Validation with Joi
+
+// This is Schema is not for Mongoose
+// This Schema is for Server-side Validation
+// so here we a using joi package(tools) to do this validation (npm i joi)
+
+const Joi = require('joi');                               // import Joi for validation (copied from jio.dev website introduction page)
+
+module.exports.listingSchema = Joi.object({                // Main schema for validating incoming request data (req.body)
+  listing: Joi.object({                                     // Expecting an object named "listing" inside req.body  ...   (req.body.listing)
+    title: Joi.string().required(),
+    description: Joi.string().required(),
+    location: Joi.string().required(),
+    country: Joi.string().required(),
+    price: Joi.number().required().min(0),
+    image: Joi.string().allow("", null),
+  }).required(),
+});
+```
+
+**app.js**:
+```js
+    let result = listingSchema.validate(req.body);
+    console.log(result);
+    if (result.error) {                                           // agar result ke andar error aaya to error throw karo (joi ke wajah se throw hoga which we can see in hoppscotch.io)
+      throw new ExpressError(400, result.error);
+    }
+```
+This code validates the incoming request body using `listingSchema` and blocks the request with a `400` error if the data is invalid.
+
+---
+
+## 2. CORS package:
+
+In short, CORS (Cross-Origin Resource Sharing) is a security feature that acts as a "permission slip" for web browsers.
+  
+By default, browsers block a website (like hoppscotch.io) from making requests to a different domain (like your localhost:8080) to prevent malicious sites from stealing your data. CORS is the mechanism that tells the browser, "It’s okay, I trust this specific website to talk to my server.
+
+**Install**:
+> npm install cors
+
+**Add this line to server file (app.js)**:
+```js
+// installed cors package so that i can use (http://localhost:8080/listings) local sever to hoppscotch.io 
+const cors = require('cors');                                                       // 1. Import it
+app.use(cors());                                                                    // 2. Enable it for all routes
+```
+
+now we can use our local server(`http://localhost:8080/listings`) to hoppscotch.io 
+
+---
+
+
+```ternimal
+{
+  value: { listing: { title: 'small tittle' } },
+  error: [Error [ValidationError]: "listing.description" is required] {
+    _original: { listing: [Object] },
+    details: [ [Object] ]
+  }
+}
+```
+
+
+# #6: Define New Middleware for Schema validation:
+
+## Explanation of below code (how they works):
+
+- `validateListing` is an Express middleware that checks incoming `req.body` against your Joi `listingSchema`.
+- `let { error } = listingSchema.validate(req.body);` → gets validation errors (if any).
+- If `error` exists:
+- Creates a readable message (`errMsg`)
+- Throws a custom `ExpressError` with status `400` → caught later by Express error handler → client sees the error.
+- If no error: calls `next()` → request continues to the next middleware or route handler.
+- In short: it blocks invalid requests and lets valid requests pass through.
+
+```js 
+// Defining new Middleware for Schema Validation (server-side)
+// Middleware to validate request data against the listingSchema using Joi.
+// If validation fails, it throws an ExpressError with status 400 and details of the error.
+// Otherwise, it calls next() to continue to the next middleware or route handler.
+const validateListing = (req, res, next) => {
+  let { error } = listingSchema.validate(req.body);
+  // console.log(error);
+  if (error) {                                           // agar result ke andar error aaya to error throw karo (joi ke wajah se throw hoga which we can see in hoppscotch.io)
+    let errMsg = error.details.map((el) => el.message).join(",");
+    throw new ExpressError(400, errMsg);
+  } else {
+    next();
+  }
+}
+```
+now we just use `validateListing` as middleware in different route where we want to validate data of that route like example below:
+
+```js
+// Create Route
+app.post(
+  "/listings",
+  validateListing,                                        // middleware to check validation for schema
+  wrapAsync(async (req, res, next) => {
+    const newListing = new Listing(req.body.listing);
+    await newListing.save();
+    res.redirect("/listings");
+  }),
+);
+```

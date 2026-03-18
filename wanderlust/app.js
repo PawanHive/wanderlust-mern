@@ -41,6 +41,21 @@ app.get("/", (req, res) => {
   res.send("Hi, I am root");
 });
 
+// Defining new Middleware for Schema Validation (server-side)
+// Middleware to validate request data against the listingSchema using Joi.
+// If validation fails, it throws an ExpressError with status 400 and details of the error.
+// Otherwise, it calls next() to continue to the next middleware or route handler.
+const validateListing = (req, res, next) => {
+  let { error } = listingSchema.validate(req.body);
+  // console.log(error);
+  if (error) {                                           // agar result ke andar error aaya to error throw karo (joi ke wajah se throw hoga which we can see in hoppscotch.io)
+    let errMsg = error.details.map((el) => el.message).join(",");
+    throw new ExpressError(400, errMsg);
+  } else {
+    next();
+  }
+}
+
 // Index Route
 app.get(
   "/listings",
@@ -59,12 +74,8 @@ app.get("/listings/new", (req, res) => {
 // Create Route
 app.post(
   "/listings",
+  validateListing,                                        // middleware to check validation for schema
   wrapAsync(async (req, res, next) => {
-    let result = listingSchema.validate(req.body);
-    console.log(result);
-    if (result.error) {                                           // agar result ke andar error aaya to error throw karo (joi ke wajah se throw hoga which we can see in hoppscotch.io)
-      throw new ExpressError(400, result.error);
-    }
     const newListing = new Listing(req.body.listing);
     await newListing.save();
     res.redirect("/listings");
@@ -95,10 +106,8 @@ app.get(
 // Update Route
 app.put(
   "/listings/:id",
+  validateListing,
   wrapAsync(async (req, res) => {
-    if (!req.body.listing) {
-      throw new ExpressError(400, "Send valid data for listing");
-    }
     let { id } = req.params;
     await Listing.findByIdAndUpdate(id, { ...req.body.listing });
     res.redirect(`/listings/${id}`); // redirect to (Show Route)
@@ -121,7 +130,7 @@ app.use((req, res, next) => {
   next(new ExpressError(404, "Page Not Found!"));                                               // next(err) MANUALLY passes a custom error to Express. Express skips all normal routes/middleware and forwards this error to the error-handling middleware, where it is received as 'err'.
 });
 
-// Error Handler Middleware
+// Express Error Handler Middleware
 // (Its Job: Catch any error in our app and send a proper response to the client. and server may never crash)
 app.use((err, req, res, next) => {
   let { statusCode = 500, message = "something went wrong" } = err;                               // (deconstruct)extract info from Express 'err' object
