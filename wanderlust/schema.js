@@ -4,10 +4,10 @@
 // This Schema is for Server-side Validation
 // so here we a using joi package(tools) to do this validation (npm i joi)
 
-const Joi = require('joi');                               // import Joi for validation (copied from jio.dev website introduction page)
+const Joi = require("joi"); // import Joi for validation (copied from jio.dev website introduction page)
 
-module.exports.listingSchema = Joi.object({                // Main schema for validating incoming request data (req.body)
-  listing: Joi.object({                                     // Expecting an object named "listing" inside req.body  ...   (req.body.listing)
+module.exports.listingSchema = Joi.object({         // Main schema for validating incoming request data (req.body)
+  listing: Joi.object({                             // Expecting an object named "listing" inside req.body  ...   (req.body.listing)
     title: Joi.string().required(),
     description: Joi.string().required(),
     location: Joi.string().required(),
@@ -16,9 +16,6 @@ module.exports.listingSchema = Joi.object({                // Main schema for va
     image: Joi.string().allow("", null),
   }).required(),
 });
-
-
-
 
 /*
 Note on Import/Export:
