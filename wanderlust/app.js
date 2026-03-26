@@ -49,7 +49,8 @@ app.get("/", (req, res) => {
 const validateListing = (req, res, next) => {
   let { error } = listingSchema.validate(req.body);
   // console.log(error);
-  if (error) {                                                      // agar result ke andar error aaya to error throw karo (joi ke wajah se throw hoga which we can see in hoppscotch.io)
+  if (error) {
+    // agar result ke andar error aaya to error throw karo (joi ke wajah se throw hoga which we can see in hoppscotch.io)
     let errMsg = error.details.map((el) => el.message).join(",");
     throw new ExpressError(400, errMsg);
   } else {
@@ -99,7 +100,7 @@ app.get(
   "/listings/:id",
   wrapAsync(async (req, res) => {
     const { id } = req.params;
-    const listing = await Listing.findById(id).populate("reviews"); 
+    const listing = await Listing.findById(id).populate("reviews");
     // console.log(listing);
     res.render("listings/show.ejs", { listing });
   }),
@@ -143,11 +144,23 @@ app.post(
   validateReview,
   wrapAsync(async (req, res) => {
     const { id } = req.params;
-    const listing = await Listing.findById(id);                       //  Find listing
-    const newReview = new Review(req.body.review);                       //  Create review
-    listing.reviews.push(newReview);                                  //  Link review to listing
-    await newReview.save();                                           //  Save review
-    await listing.save();                                                 //  Save listing
+    const listing = await Listing.findById(id); //  Find listing
+    const newReview = new Review(req.body.review); //  Create review
+    listing.reviews.push(newReview); //  Link review to listing
+    await newReview.save(); //  Save review
+    await listing.save(); //  Save listing
+    res.redirect(`/listings/${id}`);
+  }),
+);
+
+// REVIEWS - delete route
+app.delete(
+  "/listings/:id/reviews/:reviewId",
+  wrapAsync(async (req, res) => {
+    let { id, reviewId } = req.params;
+    await Listing.findByIdAndUpdate(id, { $pull: { reviews: reviewId } }); // this line make sure: removes review ObjectId from 'reviews' array, means it should delete completely
+    await Review.findByIdAndDelete(reviewId);
+
     res.redirect(`/listings/${id}`);
   }),
 );

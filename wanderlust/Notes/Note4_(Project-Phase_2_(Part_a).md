@@ -58,3 +58,11 @@ req.body → new Review() → .save() → MongoDB
 ## One Line
 👉 Take form data → make review document → save to database
 
+
+
+# #2: Deleting Review ( Sigma Note )
+## Mongo $pull operator
+
+### `$pull`
+**Note:**  
+The `$pull` operator removes from an existing array all instances of a value or values that match a specified condition.
