@@ -45,6 +45,7 @@ router.post(
   wrapAsync(async (req, res, next) => {
     const newListing = new Listing(req.body.listing);
     await newListing.save();
+    req.flash("success", "New Listing Created!"); // this message will flash after creating new listing but to access this message we will use res.locals()
     res.redirect("/listings");
   }),
 );
