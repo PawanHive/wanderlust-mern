@@ -30,9 +30,10 @@
   <body>
     <%- include("../includes/navbar.ejs") %>
 
-    <!-- This heading is FIXED. It will appear on EVERY page that uses this layout -->
-    <!-- <h1>Wanderlust</h1> -->
-    <div class="container"><%- body %></div>
+    <div class="container">
+      <%- include('../includes/flash.ejs') %>
+      <%- body %>
+    </div>
 
     <%- include("../includes/footer.ejs") %>
     <script

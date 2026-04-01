@@ -57,6 +57,10 @@ router.get(
     const { id } = req.params;
     const listing = await Listing.findById(id).populate("reviews");
     // console.log(listing);
+    if (!listing) {
+      req.flash("error", "Listing you requested for does not exist");   // request to: http://localhost:8080/listings/69ccc12e0f88fd9bc12480a4    to test it copy link of exiting listing and delete and find again then this message will appear
+      return res.redirect("/listings");
+    }
     res.render("listings/show.ejs", { listing });
   }),
 );
@@ -67,6 +71,10 @@ router.get(
   wrapAsync(async (req, res) => {
     const { id } = req.params;
     const listing = await Listing.findById(id);
+    if (!listing) {
+      req.flash("error", "Listing you requested for edit does not exist");    // request to: http://localhost:8080/listings/69ccc12e0f88fd9bc12480a4/edit 
+      return res.redirect("/listings");
+    }
     res.render("listings/edit.ejs", { listing });
   }),
 );
@@ -78,6 +86,7 @@ router.put(
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+    req.flash("success", "Listing Updated!");
     res.redirect(`/listings/${id}`); // redirect to (Show Route)
   }),
 );
@@ -89,6 +98,7 @@ router.delete(
     let { id } = req.params;
     let deletedListing = await Listing.findByIdAndDelete(id);
     console.log(deletedListing);
+    req.flash("success", "Listing Deleted!");
     res.redirect("/listings");
   }),
 );
