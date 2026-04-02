@@ -13,7 +13,7 @@ const User = require("./models/user.js");
 
 const listingsRoute = require("./routes/listings.js"); // require 'listings' all routes
 const reviewsRoute = require("./routes/reviews.js"); // require 'reviews' all routes
-const usersRoute = require("./routes/users.js"); // require 'reviews' all routes
+const usersRoute = require("./routes/users.js"); // require 'users' routes
 
 // installed cors package so that i can use (http://localhost:8080/listings) local sever to hoppscotch.io
 const cors = require("cors"); // 1. Import it
@@ -78,20 +78,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// "/demouser" route: created based upon (passort-local-mongoose)
-app.get("/demouser", async (req, res) => {
-  let fakeUser = new User({
-    email: "student@gmail.com",
-    username: "delte-student",
-  });
-
-  let registerUser = await User.register(fakeUser, "helloworld"); // register(user, password, cb) Convenience method to register a new user instance with a given password. Checks if username is unique.
-  res.send(registerUser);
-});
-
 // express Router Middleware ( these are routes )
 app.use("/listings", listingsRoute); // for "listings" (below line is = whole code in ./routes/listings.js)
 app.use("/listings/:id/reviews", reviewsRoute); // for "reviews" (below line is = whole code in ./routes/reviews.js)
+app.use("/", usersRoute); // for "users" (below line is = whole code in ./routes/reviews.js)
 
 // handle unknown routes (runs when user requests a route that does not exist)
 app.use((req, res, next) => {
@@ -157,3 +147,15 @@ app.listen(port, () => {
 //     console.log("sample was saved");
 //     res.send("successful testing");
 // })
+
+
+// // "/demouser" route: created based upon (passort-local-mongoose)
+// app.get("/demouser", async (req, res) => {
+//   let fakeUser = new User({
+//     email: "student@gmail.com",
+//     username: "delte-student",
+//   });
+
+//   let registerUser = await User.register(fakeUser, "helloworld"); // register(user, password, cb) Convenience method to register a new user instance with a given password. Checks if username is unique.
+//   res.send(registerUser);
+// });

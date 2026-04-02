@@ -64,4 +64,9 @@ What this plugin does automatically:
 // Export the model (creates "User" collection in MongoDB)
 module.exports = mongoose.model("User", userSchema);
 ```
+# #2: Configure `passport` strategies
 
+# #3: Signup User
+
+**GET /signup**  
+**POST /signup**
