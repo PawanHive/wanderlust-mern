@@ -7,9 +7,13 @@ const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
 const session = require("express-session");
 const flash = require("connect-flash");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user.js");
 
 const listingsRoute = require("./routes/listings.js"); // require 'listings' all routes
 const reviewsRoute = require("./routes/reviews.js"); // require 'reviews' all routes
+const usersRoute = require("./routes/users.js"); // require 'reviews' all routes
 
 // installed cors package so that i can use (http://localhost:8080/listings) local sever to hoppscotch.io
 const cors = require("cors"); // 1. Import it
@@ -55,16 +59,34 @@ app.get("/", (req, res) => {
   res.send("Hi, I am root");
 });
 
-// express-session middleware
-app.use(session(sessionOptions));
-// connect-flash middleware
-app.use(flash());
+app.use(session(sessionOptions)); // express-session middleware
+app.use(flash()); // connect-flash middleware
+
+// passport/passport-local
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate())); // use static authenticate method of model in LocalStrategy
+
+// passport/passport-local: use static serialize and deserialize of model for passport session support
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // connect-flash custom-middleware (flash should always declared above routes)
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   next();
+});
+
+// "/demouser" route: created based upon (passort-local-mongoose)
+app.get("/demouser", async (req, res) => {
+  let fakeUser = new User({
+    email: "student@gmail.com",
+    username: "delte-student",
+  });
+
+  let registerUser = await User.register(fakeUser, "helloworld"); // register(user, password, cb) Convenience method to register a new user instance with a given password. Checks if username is unique.
+  res.send(registerUser);
 });
 
 // express Router Middleware ( these are routes )
