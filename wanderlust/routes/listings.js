@@ -6,6 +6,7 @@ const ExpressError = require("../utils/ExpressError.js");
 const { listingSchema } = require("../schema.js"); //server-side validation (Joi) schema required
 const Listing = require("../models/listing");
 
+const isLoggedIn = require("../middleware.js")
 
 
 // Defining new Middleware for listingSchema Validation (server-side)
@@ -34,7 +35,8 @@ router.get(
 );
 
 // New Route
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
+  // console.log(req.user); // store 'user' related information.
   res.render("listings/new.ejs");
 });
 
@@ -68,6 +70,7 @@ router.get(
 // Edit Route
 router.get(
   "/:id/edit",
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     const { id } = req.params;
     const listing = await Listing.findById(id);
@@ -82,6 +85,7 @@ router.get(
 // Update Route
 router.put(
   "/:id",
+  isLoggedIn,
   validateListing,
   wrapAsync(async (req, res) => {
     let { id } = req.params;
@@ -94,6 +98,7 @@ router.put(
 // Delete Route
 router.delete(
   "/:id",
+  isLoggedIn,
   wrapAsync(async (req, res) => {
     let { id } = req.params;
     let deletedListing = await Listing.findByIdAndDelete(id);

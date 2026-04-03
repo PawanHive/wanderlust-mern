@@ -64,7 +64,7 @@ What this plugin does automatically:
 // Export the model (creates "User" collection in MongoDB)
 module.exports = mongoose.model("User", userSchema);
 ```
-# #2: Configure `passport` strategies
+# #2: Configure `passport` strategies (`app.js`)
 ```js
 const passport = require("passport"); 
 // Import Passport (main authentication library)
@@ -115,6 +115,8 @@ passport.deserializeUser(User.deserializeUser());
 - Fetches full user data from database
 - Makes it available as req.user
 */
+
+app.use("/", usersRoute);
 ```
 # 🧠 One-Line Understanding (Very Important)
 
