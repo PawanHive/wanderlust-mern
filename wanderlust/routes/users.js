@@ -16,10 +16,16 @@ router.post(
     try {
       let { username, email, password } = req.body;
       const newUser = new User({ email, username });
-      const registeredUser = await User.register(newUser, password);
-      console.log(registeredUser);
-      req.flash("success", "Welcome to Wanderlust!");
-      res.redirect("/listings");
+      const registeredUser = await User.register(newUser, password); // stored user info into data base.
+      // console.log(registeredUser);
+      req.login(registeredUser, (err) => {
+        // 'req.login()' make user login automatically just after signup(register).
+        if (err) {
+          return next(err); // rare (err), handle using express error handler.
+        }
+        req.flash("success", "Welcome to Wanderlust!");
+        res.redirect("/listings");
+      });
     } catch (e) {
       req.flash("error", e.message);
       res.redirect("/signup");
@@ -44,7 +50,6 @@ router.post(
     res.redirect("/listings");
   },
 );
-
 
 // Logout GET route
 router.get("/logout", (req, res, next) => {

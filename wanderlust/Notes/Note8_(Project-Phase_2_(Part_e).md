@@ -1,3 +1,8 @@
+# # Important Link:
+**passport `req.logout()` documentation:**[https://www.passportjs.org/concepts/authentication/logout/](https://www.passportjs.org/concepts/authentication/logout/)
+
+**passport `req.login()` documentation:**[https://www.passportjs.org/concepts/authentication/login/](https://www.passportjs.org/concepts/authentication/login/)
+
 # #1: Connecting Login Route
 
 ## 1.1. How to check if User is Logged in?
@@ -55,6 +60,8 @@ Now we can add `isLoggedIn` middleware to multiple routes (where we want to auth
 using passport `req.logout()` methods.  
 `GET /logout`
 
+**passport `req.logout()` documentation:**[https://www.passportjs.org/concepts/authentication/logout/](https://www.passportjs.org/concepts/authentication/logout/)
+
 ## What does `req.logout()` do?
 
 `req.logout()` is a Passport method that removes the user from the session, clears `req.user`, and makes the request unauthenticated.
@@ -65,7 +72,7 @@ using passport `req.logout()` methods.
 router.get("/logout", (req, res, next) => {
   req.logout((err) => {
     if (err) {
-      return next(err); // if passport is failed a middleware then only we get this error. other we usually don't get error during logout.
+      return next(err); // if passport is failed a middleware then only we get this error. other we usually don't get error during logout (this error usually handle by express-error-handling middleware).
     }
     req.flash("success", "You are logged out!");
     res.redirect("/listings");
@@ -97,3 +104,42 @@ app.use((req, res, next) => {
 });
 ```
 This **middleware** makes flash messages and the logged-in user available to all EJS templates using `res.locals`.
+
+# #4: Login after SignUp
+**Problem/Flaws:** we found flaws even after SignUp, we need to login then to create, edit something.
+
+**Solution:** as user SignUp(register) in website, they should automatically logged-in.
+
+## 1.1. Sigma note:
+Passport's login method automatically established a login session.  
+We can invoke login to automatically login a user.
+
+`../routes/users.js`
+```js
+// SignUp POST route
+router.post(
+  "/signup",
+  wrapAsync(async (req, res) => {
+    try {
+      let { username, email, password } = req.body;
+      const newUser = new User({ email, username });
+      const registeredUser = await User.register(newUser, password); // stored user info into data base.
+      // console.log(registeredUser);
+      req.login(registeredUser, (err) => {
+        // 'req.login()' make user login automatically just after signup(register).
+        if (err) {
+          return next(err); // rare (err), handle using express error handler.
+        }
+        req.flash("success", "Welcome to Wanderlust!");
+        res.redirect("/listings");
+      });
+    } catch (e) {
+      req.flash("error", e.message);
+      res.redirect("/signup");
+    }
+  }),
+);
+```
+we need to use `req.login()` just after registered/save user data to server, so that it can login immediately just after signup/register.
+
+`req.login()` is a Passport method that logs in a user by storing their data in the session and setting `req.user`, making them authenticated immediately.
