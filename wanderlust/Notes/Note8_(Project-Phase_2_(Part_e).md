@@ -388,3 +388,108 @@ router.delete(
   }),
 );
 ```
+
+# #9: Authorizatin for `/reviews`
+
+**Feature we Want:**  
+- When a user posts a review → store the **owner/author**
+- Display **author name** next to each review
+- Only the **review owner** can delete it (authorization)
+- Add backend checks to **secure deletion**
+- Show/hide **delete button** on frontend based on owner
+
+## 9.1 Step 1: Update Review Model
+
+📁 `models/review.js`
+
+```js
+  author: {
+    // add 'author' field in reviewSchema
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
+```
+`author` stores the **User ID** of the review author.
+
+## 8.2 Step 2: Store owner when creating a review
+
+📁 routes/reviews.js
+
+```js
+// REVIEWS - post route
+router.post(
+  "/",
+  validateReview,
+  isLoggedIn,
+  wrapAsync(async (req, res) => {
+    newReview.author = req.user._id; // Link review to logged-in user
+  }),
+);
+```
+✅ Same as previous step — this is **required for both showing author and authorization.**
+
+## 8.3 Step 3: Populate owner when fetching listing
+
+📁 `routes/listings.js` → Show Route
+
+```js
+// Show Route
+router.get(
+  "/:id",
+  wrapAsync(async (req, res) => {
+    const listing = await Listing.findById(id)
+      .populate({   // nestes populate of 'reviews' and it's review's author.
+        path: "reviews", // fetch 'reviews' and it also means we want 'review' ke saath wale 'author' field ko pupulate karna chahte hai.
+        populate: { path: "author" },  // fetch each review's owner
+      })
+      .populate("owner"); // fetch listing's owne
+  }),
+);
+```
+`populate("reviews")` fetches reviews
+`populate("reviews.author")` fetches **review authors**
+
+## 8.4 Step 4: Update EJS to show author
+
+📁 `views/listings/show.ejs`
+
+```html
+<h5 class="card-title"> @<%= review.author.username %></h5>
+```
+`review.owner.username` shows the **author’s name**
+
+## 8.5 Step 5: Backend authorization for deleting reviews
+
+📁`middleware.js`
+
+```js
+const Review = require("./models/review.js");
+
+// 'isReviewAuthor' middleware checks if the current user is the author of a review and blocks access if they aren’t. (no one can request for edit/delete from postman or hoppscotch)
+module.exports.isReviewAuthor = async (req, res, next) => {
+  let { id,  reviewId } = req.params;
+  let review = await Review.findById(reviewId);
+  if (!review.author._id.equals(res.locals.currUser._id)) {
+    req.flash("error", "You are not the author of this review!");
+    return res.redirect(`/listings/${id}`);
+  }
+  next();
+};
+```
+
+## 8.6 Step 6: Apply middleware to DELETE route
+
+📁 `routes/reviews.js`
+
+```js
+const { validateReview, isLoggedIn, isReviewAuthor } = require("../middleware.js");
+
+// REVIEWS - delete route
+router.delete(
+  "/:reviewId",
+  isLoggedIn,
+  isReviewAuthor,
+  wrapAsync(async (req, res) => {
+  }),
+);
+```
