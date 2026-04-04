@@ -5,30 +5,28 @@ const wrapAsync = require("../utils/wrapAsync.js");
 const passport = require("passport");
 const { saveRedirectUrl } = require("../middleware.js");
 
-const userController = require("../controllers/users.js")
+const userController = require("../controllers/users.js");
 
-// SignUp GET route
-router.get("/signup", userController.renderSignupForm);
+// ("/signup") Combines all same path of multiple routes at one place
+router
+  .route("/signup")
+  .get(userController.renderSignupForm) // SignUp GET route
+  .post(
+    wrapAsync(userController.signup), // SignUp POST route
+  );
 
-// SignUp POST route
-router.post(
-  "/signup",
-  wrapAsync(userController.signup),
-);
-
-// Login GET route
-router.get("/login", userController.renderLoginForm);
-
-// Login POST route: // passport.authenticate() is middleware by passport
-router.post(
-  "/login",
-  saveRedirectUrl,
-  passport.authenticate("local", {
-    failureRedirect: "/login",
-    failureFlash: true,
-  }),
-  userController.login
-);
+// ("/login") Combines all same path of multiple routes at one place
+router
+  .route("/login")
+  .get(userController.renderLoginForm) // Login GET route
+  .post(
+    saveRedirectUrl,
+    passport.authenticate("local", {
+      failureRedirect: "/login", // passport.authenticate() is middleware by passport
+      failureFlash: true,
+    }),
+    userController.login, // Login POST route:
+  );
 
 // Logout GET route
 router.get("/logout", userController.logout);

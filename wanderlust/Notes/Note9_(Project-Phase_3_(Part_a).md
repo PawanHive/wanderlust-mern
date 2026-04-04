@@ -1,3 +1,6 @@
+# Important Links:
+**Express `router.route(path)` docs:**[https://expressjs.com/en/5x/api.html#router.route](https://expressjs.com/en/5x/api.html#router.route)
+
 # MVC (Model View Controller)
 
 ## What is MVC?
@@ -155,3 +158,38 @@ router.post(
 );
  ```
 # ----------------------------------------------------------------------------------------------------------------
+
+# #4: Router.route()
+
+## 4.1 What is router.route()?
+`router.route()` **lets you handle multiple HTTP methods for the same path in one place.**  
+
+### Before Using `router.route()`: 
+`routes/listings.js` code looks like
+```js
+// Index Route
+router.get("/", wrapAsync(listingController.index));
+
+// Create Route
+router.post(
+  "/",
+  validateListing, // middleware to check validation for schema
+  wrapAsync(listingController.createListing),
+);
+```
+Here we can observe one thing (`"/"`) path is same for **Index** and **Update** route. so here we will use `router.route()` and combine both routes at one place
+
+### After Using `router.route()`:
+`routes/listings.js`
+```js 
+// Combines all same path ("/") of routes at one place
+router
+  .route("/")
+  .get(wrapAsync(listingController.index)) // Index Route
+  .post(
+    validateListing, // middleware to check validation for schema
+    wrapAsync(listingController.createListing), // Create Route
+  );
+```
+And we can do `router.route()` for all listings, reviews and Users, if there **multiple routes** exists with **same path**, it makes our code more stuctured.
+
