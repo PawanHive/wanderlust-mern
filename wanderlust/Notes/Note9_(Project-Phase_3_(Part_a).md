@@ -390,5 +390,64 @@ finally cloud setup done.
 
 # --------------------------------------------------------------------------------------------------------------
 
+# #9: Store files:
+
+**`cloudinary` package**[https://www.npmjs.com/package/cloudinary](https://www.npmjs.com/package/cloudinary)
+
+**`multer-storage-cloudinary` package**[https://www.npmjs.com/package/multer-storage-cloudinary](https://www.npmjs.com/package/multer-storage-cloudinary)
+
+**Cloud Storage Link**
+[]()
+
+**first of all install both pacakge:**
+`npm i cloudinary`  
+`npm i multer-storage-cloudinary`
+
+`../cloudConfig.js`
+
+```js
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME, //(cloud_name:) - this name should alway same
+  api_key: process.env.CLOUD_API_KEY, // (api-key:) - this name should alway same
+  api_secret: process.env.CLOUD_API_SECRET, // (api-secret:) - this name should alway same  
+});
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "wanderlust_DEV",
+    allowed_formats: ["png", "jpg", "jpeg"],
+  },
+});
+
+module.exports = { cloudinary, storage };
+```
+- this configuration code will basically tell our system(project), how to access claudinary account.
+- means our backend system connected to our cloud storage (cloudinary);
+
+`routes/listings.js`
+
+```js
+const multer  = require('multer')
+
+const { storage } = require("../cloudConfig.js")
+const upload = multer({ storage }) // now data will store in claudinary storage   // 'dest' = destination; & automatically create 'upload' named folder where all image file info will save.
 
 
+// Combines all same path ("/") of multiple routes at one place
+router
+  .route("/")
+  .get(wrapAsync(listingController.index)) // Index Route
+  // .post(
+  //   isLoggedIn,
+  //   validateListing, // middleware to check validation for schema
+  //   wrapAsync(listingController.createListing) // Create Route
+  // );
+  .post(upload.single('listing[image]'), (req, res) => { // just for trial
+    res.send(req.file)
+  })
+```
+now our image will directly go backend to cloud storage (cloudinary) with the help of multer.
