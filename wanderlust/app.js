@@ -1,3 +1,8 @@
+// Load environment variables from .env file only in non-production environments
+if (process.env.NODE_ENV != "production") {
+  require("dotenv").config();
+}
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -10,7 +15,6 @@ const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
-
 
 const listingsRoute = require("./routes/listings.js"); // require 'listings' all routes
 const reviewsRoute = require("./routes/reviews.js"); // require 'reviews' all routes
@@ -149,7 +153,6 @@ app.listen(port, () => {
 //     console.log("sample was saved");
 //     res.send("successful testing");
 // })
-
 
 // // "/demouser" route: created based upon (passort-local-mongoose)
 // app.get("/demouser", async (req, res) => {

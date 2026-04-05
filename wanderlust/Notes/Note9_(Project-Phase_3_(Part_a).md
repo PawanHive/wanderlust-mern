@@ -351,3 +351,44 @@ router
     res.send(req.file)
   })
 ```
+
+# --------------------------------------------------------------------------------------------------------------
+
+# #8: Cloud Setup
+
+## Create `.env` file
+
+- to store environment variables 
+- environment varibles always written in **(`KEY:value`)** format, `KEY` - always capital letter and `value` - copied from credentials.
+- don't forget to add `.env ` into `.gitignore` because .env info is always credentials so no-one other can see/access it.
+- one more thing we can't access `.env` file content directly in our project-file, so to access it we use 3rd party library called [dotenv](https://www.npmjs.com/package/dotenv) npm package, to install run command `npm i dotenv` and now we have to import and configure it into server-file (app.js) 
+
+```js
+require('dotenv').config() // or import 'dotenv/config' if you're using ES6
+
+console.log(process.env) // remove this after you've confirmed it is working
+```
+
+**Refactor Above code and add in `app.js`:**
+```js
+// Load environment variables from .env file only in non-production environments
+if (process.env.NODE_ENV != "production") {
+  require("dotenv").config();
+}
+```
+we can access using `process.env.VARIABLE_NAME`.
+
+**This is how we Store Credentials in `.env`:** 
+```.env
+CLOUD_NAME=*********
+CLOUD_API_KEY=**************
+CLOUD_API_SECRET=****************************
+// we can't share .env credentials here, because it will push to github
+```
+hope you noticed there is no `space` around `=`   
+finally cloud setup done.
+
+# --------------------------------------------------------------------------------------------------------------
+
+
+
