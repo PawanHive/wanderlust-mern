@@ -15,8 +15,12 @@ module.exports.renderNewForm = (req, res) => {
 
 // Create Route - controller
 module.exports.createListing = async (req, res, next) => {
+  let url = req.file.path;
+  let filename = req.file.filename;
+
   const newListing = new Listing(req.body.listing);
   newListing.owner = req.user._id; // (Link listing to logged-in user), passport by default save user info in 'req.user'
+  newListing.image = { url, filename };
   await newListing.save();
   req.flash("success", "New Listing Created!"); // this message will flash after creating new listing but to access this message we will use res.locals()
   res.redirect("/listings");

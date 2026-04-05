@@ -16,14 +16,12 @@ const upload = multer({ storage }) // now data will store in claudinary storage 
 router
   .route("/")
   .get(wrapAsync(listingController.index)) // Index Route
-  // .post(
-  //   isLoggedIn,
-  //   validateListing, // middleware to check validation for schema
-  //   wrapAsync(listingController.createListing) // Create Route
-  // );
-  .post(upload.single('listing[image]'), (req, res) => {
-    res.send(req.file)
-  })
+  .post(
+    isLoggedIn,
+    validateListing, // middleware to check validation for schema
+    upload.single('listing[image]'), // multer middleware
+    wrapAsync(listingController.createListing) // Create Route
+  );
 
 // New Route
 router.get("/new", isLoggedIn, listingController.renderNewForm);

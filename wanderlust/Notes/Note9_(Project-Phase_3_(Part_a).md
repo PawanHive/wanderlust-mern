@@ -1,6 +1,14 @@
 # Important Links:
 **Express `router.route(path)` docs:**[https://expressjs.com/en/5x/api.html#router.route](https://expressjs.com/en/5x/api.html#router.route)
 
+**`cloudinary` package**[https://www.npmjs.com/package/cloudinary](https://www.npmjs.com/package/cloudinary)
+
+**`multer-storage-cloudinary` package**[https://www.npmjs.com/package/multer-storage-cloudinary](https://www.npmjs.com/package/multer-storage-cloudinary)
+
+**(cloudinary) Cloud Storage Link:**
+[https://console.cloudinary.com/app/c-512d94531fbc196eed145d6752ac0f/assets/media_library/folders/ceae34af0d094e8e32276ae7b0de126bf8?view_mode=mosaic](https://console.cloudinary.com/app/c-512d94531fbc196eed145d6752ac0f/assets/media_library/folders/ceae34af0d094e8e32276ae7b0de126bf8?view_mode=mosaic)
+
+
 **Multer npm package:**[https://www.npmjs.com/package/multer](https://www.npmjs.com/package/multer)
 # MVC (Model View Controller)
 
@@ -303,13 +311,22 @@ flowchart LR
 
 # #7: Manipulating Form
 
+## 🎯 Goal
+
+- Enable form to send **files (images)** to backend  
+- Parse multipart data using Multer  
+
+
+## 🚧 Problem
+
 For now we are using `app.use(express.urlencoded({ extended: true }));` this line to parse our form which parse only data (econded data) not files
 
 but Now we have to use `enctype="multipart/form-data"` line of code in our form which makes our form capable to sending files also do database server.
 
 And to parse **multipart** - `enctype="multipart/form-data"` we use [Multer](https://www.npmjs.com/package/multer) npm package. Download it using `npm i multer` because express can't understand **multipart**
 
-`views/listings/new.ejs`
+## Step 1: Update Form (`enctype`)
+📁 `views/listings/new.ejs`
 ```html
     <form
       method="POST"
@@ -332,7 +349,16 @@ And to parse **multipart** - `enctype="multipart/form-data"` we use [Multer](htt
     </form>
 ```
 
-`routes/listings.js`
+## Step 2: Install Multer
+
+npm i multer
+
+👉 Multer is required because:
+- Express **cannot handle multipart/form-data**
+- Multer parses files from request
+
+## Step 3: Setup Multer in Route
+📁 `routes/listings.js`
 ```js
 const multer  = require('multer')
 const upload = multer({ dest: 'uploads/' }) // 'dest' = destination; & automatically create 'upload' named folder where all image file info will save.
@@ -342,11 +368,6 @@ const upload = multer({ dest: 'uploads/' }) // 'dest' = destination; & automatic
 router
   .route("/")
   .get(wrapAsync(listingController.index)) // Index Route
-  // .post(
-  //   isLoggedIn,
-  //   validateListing, // middleware to check validation for schema
-  //   wrapAsync(listingController.createListing) // Create Route
-  // );
   .post(upload.single('listing[image]'), (req, res) => {   // "upload.single('listing[image]')" this is middleware
     res.send(req.file)
   })
@@ -354,15 +375,29 @@ router
 
 # --------------------------------------------------------------------------------------------------------------
 
-# #8: Cloud Setup
+# #8: Cloud Setup (Environment Variables)
 
-## Create `.env` file
+## 🎯 Goal
 
-- to store environment variables 
-- environment varibles always written in **(`KEY:value`)** format, `KEY` - always capital letter and `value` - copied from credentials.
-- don't forget to add `.env ` into `.gitignore` because .env info is always credentials so no-one other can see/access it.
+- Store sensitive credentials securely  
+- Access them safely inside the project  
+
+## Step 1: Create `.env` file
+
+- Used to store **environment variables**
+- Format: `KEY=value`
+
+### 🧠 Rules:
+- `KEY` → always **UPPERCASE**
+- `value` → copied from credentials
+- ❗ No spaces around `=`
+
+
+- don't forget to add `.env ` into `.gitignore` Prevents credentials from being pushed to GitHub
+
 - one more thing we can't access `.env` file content directly in our project-file, so to access it we use 3rd party library called [dotenv](https://www.npmjs.com/package/dotenv) npm package, to install run command `npm i dotenv` and now we have to import and configure it into server-file (app.js) 
 
+## Step 2: Configure dotenv in `app.js`
 ```js
 require('dotenv').config() // or import 'dotenv/config' if you're using ES6
 
@@ -392,18 +427,26 @@ finally cloud setup done.
 
 # #9: Store files:
 
+## 🎯 Goal
+
+Upload images from user → send to backend → store in **Cloudinary (cloud storage)**
+
+## 📦 Required Packages
 **`cloudinary` package**[https://www.npmjs.com/package/cloudinary](https://www.npmjs.com/package/cloudinary)
 
 **`multer-storage-cloudinary` package**[https://www.npmjs.com/package/multer-storage-cloudinary](https://www.npmjs.com/package/multer-storage-cloudinary)
 
-**Cloud Storage Link**
-[]()
+**(cloudinary) Cloud Storage Link:**
+[https://console.cloudinary.com/app/c-512d94531fbc196eed145d6752ac0f/assets/media_library/folders/ceae34af0d094e8e32276ae7b0de126bf8?view_mode=mosaic](https://console.cloudinary.com/app/c-512d94531fbc196eed145d6752ac0f/assets/media_library/folders/ceae34af0d094e8e32276ae7b0de126bf8?view_mode=mosaic)
 
-**first of all install both pacakge:**
-`npm i cloudinary`  
-`npm i multer-storage-cloudinary`
+## 🛠️ Installation
 
-`../cloudConfig.js`
+```bash
+npm i cloudinary
+npm i multer-storage-cloudinary
+```
+## Step 1: Configure Cloudinary
+📁 `../cloudConfig.js`
 
 ```js
 const cloudinary = require("cloudinary").v2;
@@ -425,10 +468,15 @@ const storage = new CloudinaryStorage({
 
 module.exports = { cloudinary, storage };
 ```
-- this configuration code will basically tell our system(project), how to access claudinary account.
-- means our backend system connected to our cloud storage (cloudinary);
+- Connects your backend to Cloudinary account
+- Defines how files will be stored in cloud
+- Sets:
+    - Folder name →` wanderlust_DEV`
+    - Allowed file formats
 
-`routes/listings.js`
+## Step 2: Setup Multer with Cloudinary Storage
+
+📁 `routes/listings.js`
 
 ```js
 const multer  = require('multer')
@@ -436,18 +484,88 @@ const multer  = require('multer')
 const { storage } = require("../cloudConfig.js")
 const upload = multer({ storage }) // now data will store in claudinary storage   // 'dest' = destination; & automatically create 'upload' named folder where all image file info will save.
 
-
 // Combines all same path ("/") of multiple routes at one place
 router
   .route("/")
   .get(wrapAsync(listingController.index)) // Index Route
-  // .post(
-  //   isLoggedIn,
-  //   validateListing, // middleware to check validation for schema
-  //   wrapAsync(listingController.createListing) // Create Route
-  // );
   .post(upload.single('listing[image]'), (req, res) => { // just for trial
     res.send(req.file)
   })
 ```
-now our image will directly go backend to cloud storage (cloudinary) with the help of multer.
+- Multer handles file from frontend
+- Storage is configured to Cloudinary
+- So:
+    - ❌ No local storage (`uploads/` folder not used)
+    - ✅ Files go directly to cloud
+
+# --------------------------------------------------------------------------------------------------------------
+
+# #10: Save Link in MongoDB
+
+## 🎯 Goal
+
+After uploading an image to Cloudinary,  
+we want to:
+
+- ✅ Extract `url` and `filename`
+- ✅ Store them in MongoDB
+- ✅ Use the stored URL to display images in frontend
+
+
+## Step 1: Modify Schema
+
+📁 `models/listing.js`
+
+modifiy `image` field in listingSchema
+
+```js
+  image: {
+    url: "String", 
+    filename: "String"
+  },
+```
+## Step 2: Add Multer Middleware in Route
+📁 `routes/listings.js` 
+
+used this multer middleware `upload.single('listing[image]'),`
+
+```js
+// Combines all same path ("/") of multiple routes at one place
+router
+  .route("/")
+  .get(wrapAsync(listingController.index)) // Index Route
+  .post(
+    isLoggedIn,
+    validateListing, // middleware to check validation for schema
+    upload.single('listing[image]'), // multer middleware
+    wrapAsync(listingController.createListing) // Create Route
+  );
+```
+## Step 3: Extract URL & Filename in Controller
+📁 `controllers/listings.js`
+
+ add few line so our `url` and `filename` should extract from mongodB
+
+ ```js
+// Create Route - controller
+module.exports.createListing = async (req, res, next) => {
+  let url = req.file.path;
+  let filename = req.file.filename;
+  newListing.image = { url, filename };
+};
+ ```
+## Step 4: Update Frontend to Use Image URL
+ 📁 `views/listings/show.ejs`
+
+ repalce  `<%= listing.image %>` with `<%= listing.image.url %>`
+
+ ```html
+<img src="<%= listing.image.url %>" class="card-img-top show-img" alt="listing_image">
+ ```
+ and same for `index.ejs` also 
+
+ 📁 `views/listings/index.ejs`
+
+ ```html
+<img src="<%= listing.image.url %>" class="card-img-top" style="height: 20rem;" alt="listing_image">
+ ```
