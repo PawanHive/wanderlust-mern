@@ -33,6 +33,7 @@ router
   .put(
     isLoggedIn,
     isOwner,
+    upload.single('listing[image]'), // multer middleware
     validateListing,
     wrapAsync(listingController.updateListing), // Update Route
   )
