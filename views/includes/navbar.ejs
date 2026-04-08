@@ -1,3 +1,31 @@
+
+<style>
+  .search-btn {
+    background-color: #fe424d;
+    color: white;
+    border-radius: 25px;
+    padding: 0 1rem 0 1rem;
+    height: 2.5rem;
+  }
+
+  .search-btn:hover {
+    background-color: #fe424d;
+    color: white;
+  }
+
+  .search-btn i {
+    display: inline;
+    margin-right: 0.5rem;
+  }
+
+  .search-input {
+    border-radius: 25px;
+    font-size: 1rem;
+    padding: 0 1rem 0 1rem;
+  }
+</style>
+
+
 <nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
   <div class="container-fluid">
     <a class="navbar-brand" href="/listings"><i class="fa-regular fa-compass"></i></a>
@@ -6,9 +34,16 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-
         <a class="nav-link" href="/listings"><strong>Explore</strong></a>
       </div>
+
+      <div class="navbar-nav ms-auto">
+        <form class="d-flex">
+          <input class="form-control me-2 search-input" type="search" placeholder="Search Destinations">
+          <button class="btn search-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i>Search</button>
+        </form>
+      </div>
+
       <div class="navbar-nav ms-auto">    <%# 'ms-auto' means margin from start, shift this options to right side%>
         <a class="nav-link" href="/listings/new"><strong>Become a host</strong></a>
         <% if (!currUser) { %>    <%# as we can't use 'req.user' directly into .ejs so we need to pass 'req.user', to all templates using 'res.locals' in our middleware(gloabal) in app.js with variable 'currUser'. %>
