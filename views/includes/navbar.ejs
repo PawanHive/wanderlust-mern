@@ -50,6 +50,15 @@
       <%# signup login & logout %>
       <div class="navbar-nav ms-auto">    <%# 'ms-auto' means margin from start, shift this options to right side%>
         <a class="nav-link" href="/listings/new"><strong>Become a host</strong></a>
+
+          <%# tax toggle switch  %>
+          <div class="tax-toggle">
+            <div class="form-check-reverse form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+              <label class="form-check-label" for="flexSwitchCheckDefault">With tax</label>
+            </div>  
+          </div>
+
         <% if (!currUser) { %>    <%# as we can't use 'req.user' directly into .ejs so we need to pass 'req.user', to all templates using 'res.locals' in our middleware(gloabal) in app.js with variable 'currUser'. %>
           <a class="nav-link" href="/signup"> <strong>Sign up</strong> </a>
           <a class="nav-link" href="/login"> <strong>Log in</strong></a>

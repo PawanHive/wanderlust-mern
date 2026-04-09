@@ -1,50 +1,5 @@
 <% layout("/layouts/boilerplate.ejs") %>
 
-<%# css for filters & tax switch %> 
-<style>
-  #filters {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-
-  .filter {
-    text-align: center;
-    margin-right: 1rem;
-    margin-top: 0;
-    opacity: 0.7;
-    color: black;
-    border: 1px solid transparent;
-  }
-
-  .filter:hover {
-    opacity: 1;
-    cursor: pointer;
-  }
-
-  .filter p {
-    font-size: 0.8rem;
-  }
-
-  .tax-info {
-    display: none;
-  }
-
-  .tax-toggle {
-    border: 1px solid black;
-    border-radius: 1rem;
-    height: 3.25rem;
-    padding: 1rem;
-    margin-left: 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-
-</style>
-
-<!-- <%= selectedCategory %> -->
 
 <div class="filters-wrapper position-relative">
 
@@ -169,16 +124,6 @@
             </div>
             <p>Islands</p>
             </a>
-
-             
-
-        <!-- <%# tax toggle switch  %>
-          <div class="tax-toggle">
-            <div class="form-check-reverse form-switch">
-              <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-              <label class="form-check-label" for="flexSwitchCheckDefault">Display total after taxes</label>
-            </div>  
-          </div> -->
 
         </div>
 

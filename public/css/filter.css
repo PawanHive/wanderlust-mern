@@ -70,3 +70,45 @@
   border: 2px solid red;
   background-color: #ffd6d6;
 }
+
+/* imported from index.ejs */
+
+#filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter {
+  text-align: center;
+  margin-right: 1rem;
+  margin-top: 0;
+  opacity: 0.7;
+  color: black;
+  border: 1px solid transparent;
+}
+
+.filter:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.filter p {
+  font-size: 0.8rem;
+}
+
+.tax-info {
+  display: none;
+}
+
+/*tax switcher*/
+.tax-toggle {
+  border: 1px solid black;
+  border-radius: 1rem;
+  height: 2.5rem;
+  padding: 1rem;
+  margin: 0 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
