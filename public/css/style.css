@@ -17,11 +17,17 @@ body {
 
 .fa-compass {
   color: #fe424d !important;
-  font-size: 2rem;
+  font-size: 2.2rem;
 }
 
 .nav-link {
   color: #222 !important;
+}
+
+.navbar-title {
+  color: #fe424d !important;
+  font-size: 1.5rem !important;
+  font-weight: 700;
 }
 
 /* footer */
@@ -128,3 +134,4 @@ body {
     width: min(1200px, 98vw);
   }
 }
+

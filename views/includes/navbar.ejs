@@ -1,46 +1,48 @@
 <%# search CSS %>
 
-<nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="/listings"><i class="fa-regular fa-compass"></i></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+  <nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
+    <div class="container-fluid">
+      <!-- <a class="navbar-brand" href="/listings"><i class="fa-regular fa-compass"></i></a> -->
 
-      <%# StayNest title %>
-      <div class="navbar-nav">
-        <a class="nav-link" href="/listings"><strong>Explore</strong></a>
-      </div>
+      <%# StayNest title & icons %>
+      <a class="navbar-brand d-flex align-items-center" href="/listings">
+        <i class="fa-regular fa-compass"></i>
+        <span class="navbar-title">StayNest</span>
+      </a>
 
-      <%# search bar  %> 
-      <div class="navbar-nav ms-auto">
-        <form class="d-flex" action="/listings" method="GET">
-          <input class="form-control me-2 search-input" type="text" name="search" placeholder="Search Destinations">
-          <button class="btn search-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i>Search</button>
-        </form>
-      </div>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <%# search bar %>
+            <div class="navbar-nav ms-auto">
+              <form class="d-flex" action="/listings" method="GET">
+                <input class="form-control me-2 search-input" type="text" name="search"
+                  placeholder="Search Destinations">
+                <button class="btn search-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i>Search</button>
+              </form>
+            </div>
 
-      <%# signup login & logout %>
-      <div class="navbar-nav ms-auto">    <%# 'ms-auto' means margin from start, shift this options to right side%>
-        <a class="nav-link" href="/listings/new"><strong>Become a host</strong></a>
+            <%# signup login & logout %>
+              <div class="navbar-nav ms-auto">
+                <%# 'ms-auto' means margin from start, shift this options to right side%>
+                  <a class="nav-link" href="/listings/new"><strong>Become a host</strong></a>
 
-          <%# tax toggle switch  %>
-          <div class="tax-toggle">
-            <div class="form-check-reverse form-switch">
-              <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-              <label class="form-check-label" for="flexSwitchCheckDefault">With tax</label>
-            </div>  
-          </div>
+                  <%# tax toggle switch %>
+                    <div class="tax-toggle">
+                      <div class="form-check-reverse form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                        <label class="form-check-label" for="flexSwitchCheckDefault">With tax</label>
+                      </div>
+                    </div>
 
-        <% if (!currUser) { %>    <%# as we can't use 'req.user' directly into .ejs so we need to pass 'req.user', to all templates using 'res.locals' in our middleware(gloabal) in app.js with variable 'currUser'. %>
-          <a class="nav-link" href="/signup"> <strong>Sign up</strong> </a>
-          <a class="nav-link" href="/login"> <strong>Log in</strong></a>
-        <% } %>
-        <% if (currUser) { %>
-          <a class="nav-link" href="/logout"> <strong>Log out</strong></a>
-        <% } %>
+                    <% if (!currUser) { %>
+                      <%# as we can't use 'req.user' directly into .ejs so we need to pass 'req.user' , to all templates
+                        using 'res.locals' in our middleware(gloabal) in app.js with variable 'currUser' . %>
+                      <a class="nav-link" href="/signup"> <strong>Sign up</strong> </a>
+                      <a class="nav-link" href="/login"> <strong>Log in</strong></a>
+                    <% } %>
+                    <% if (currUser) { %>
+                      <a class="nav-link" href="/logout"> <strong>Log out</strong></a>
+                    <% } %>
+              </div>
       </div>
     </div>
-  </div>
-</nav>
+  </nav>

@@ -24,6 +24,12 @@
 
 /* Remove Bootstrap blue focus */
 .form-control:focus {
-  border-color: #fe424d; /* your theme red */
-  box-shadow: 0 0 0 0.2rem rgba(254, 66, 77, 0.25);
+  border-color: #000000;
+  box-shadow: 0 0 0 0.2rem rgba(8, 5, 5, 0);
+}
+
+/* Remove Bootstrap blue focus */
+.form-select:focus {
+  border-color: #000000;
+  box-shadow: 0 0 0 0.2rem rgba(8, 5, 5, 0);
 }
