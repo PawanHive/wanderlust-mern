@@ -1,0 +1,72 @@
+/* Wrapper */
+.filters-wrapper {
+  position: relative;
+  margin: 1rem 0;
+}
+
+/* Horizontal scroll */
+#filters {
+  gap: 0.1rem;
+  padding: 0rem 3.5rem; /* extra space so arrows don't cover filters */
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar */
+#filters::-webkit-scrollbar {
+  display: none;
+}
+
+/* Filter box */
+.filter {
+  min-width: 100px;
+  text-align: center;
+  padding: 10px;
+  border-radius: 12px;
+  background-color: #ffeaea; /* light red */
+  border: 1px solid transparent;
+  text-decoration: none;
+  color: black;
+  transition: 0.2s;
+}
+
+/* Hover */
+.filter:hover {
+  transform: scale(1.05);
+}
+
+/* Active filter */
+.filter.active {
+  border: 2px solid red;
+  background-color: #ffd6d6;
+}
+
+/* Arrows */
+.scroll-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid #f1caca;
+  border-radius: 50%;
+  background: #fff5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.left-btn {
+  left: 0.5rem;
+}
+
+.right-btn {
+  right: 0.5rem;
+}
+
+.filter.active {
+  border: 2px solid red;
+  background-color: #ffd6d6;
+}

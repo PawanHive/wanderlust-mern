@@ -10,9 +10,11 @@
 
   .filter {
     text-align: center;
-    margin-right: 2rem;
-    margin-top: 2rem;
+    margin-right: 1rem;
+    margin-top: 0;
     opacity: 0.7;
+    color: black;
+    border: 1px solid transparent;
   }
 
   .filter:hover {
@@ -38,104 +40,153 @@
     align-items: center;
     justify-content: center;
   }
+
+
 </style>
 
+<!-- <%= selectedCategory %> -->
+
+<div class="filters-wrapper position-relative">
+
+
         <%# category filter %>
-        <div id="filters">
+        <div id="filters" class="d-flex flex-nowrap overflow-auto">
 
-          <div class="filter">
-            <div>
-              <i class="fa-solid fa-fire"></i>
-            </div>
-            <p>Trending</p>
-          </div>
+            <!-- LEFT ARROW -->
+          <button class="scroll-btn left-btn">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
 
-          <div class="filter">
-            <div>
-              <i class="fa-solid fa-bed"></i>
-            </div>
-            <p>Rooms</p>
-          </div>
+            <a href="/listings" class="filter <%= !selectedCategory ? 'active' : '' %>">
+              <div>
+                <i class="fa-solid fa-border-all"></i>
+              </div>
+              <p>All</p>
+            </a>
 
-          <div class="filter">
+
+            <a href="/listings?category=trending" class="filter <%= selectedCategory === 'trending' ? 'active' : '' %>">
+              <div>
+                <i class="fa-solid fa-fire"></i>
+              </div>
+              <p>Trending</p>
+            </a>
+
+            
+
+            <a href="/listings?category=rooms" class="filter <%= selectedCategory === 'rooms' ? 'active' : '' %>">
+              <div>
+                <i class="fa-solid fa-bed"></i>
+              </div>
+              <p>Rooms</p>
+            </a>
+
+            
+
+            <a href="/listings?category=iconic-cities" class="filter <%= selectedCategory === 'iconic-cities' ? 'active' : '' %>">
             <div>
               <i class="fa-solid fa-mountain-city"></i>
             </div>
             <p>Iconic Cities</p>
-          </div>
+          </a>
 
-          <div class="filter">
+        
+
+          <a href="/listings?category=mountains" class="filter <%= selectedCategory === 'mountains' ? 'active' : '' %>">
             <div>
               <i class="fa-solid fa-mountain"></i>
             </div>
             <p>Mountains</p>
-          </div>
+          </a>
 
-          <div class="filter">
-            <div>
-              <i class="fa-brands fa-fort-awesome"></i>
-            </div>
-            <p>Castles</p>
-          </div>
 
-          <div class="filter">
-            <div>
-              <i class="fa-solid fa-person-swimming"></i>
-            </div>
-            <p>Amazing Pools</p>
-          </div>
+            <a href="/listings?category=castles" class="filter <%= selectedCategory === 'castles' ? 'active' : '' %>">
+              <div>
+                <i class="fa-brands fa-fort-awesome"></i>
+              </div>
+              <p>Castles</p>
+            </a>
 
-          <div class="filter">
-            <div>
-              <i class="fa-solid fa-campground"></i>
-            </div>
-            <p>Camping</p>
-          </div>
+            
 
-          <div class="filter">
-            <div>
-              <i class="fa-solid fa-tractor"></i>
-            </div>
-            <p>Farms</p>
-          </div>
+            <a href="/listings?category=pools" class="filter <%= selectedCategory === 'pools' ? 'active' : '' %>">
+              <div>
+                <i class="fa-solid fa-person-swimming"></i>
+              </div>
+              <p>Pools</p>
+            </a>
 
-          <div class="filter">
-            <div>
-              <i class="fa-solid fa-snowflake"></i>
-            </div>
-            <p>Arctic</p>
-          </div>
+            
 
-          <div class="filter">
-            <div>
-              <i class="fa-solid fa-igloo"></i>
-            </div>
-            <p>Dome</p>
-          </div>
+              <a href="/listings?category=camping" class="filter <%= selectedCategory === 'camping' ? 'active' : '' %>">
+                <div>
+                  <i class="fa-solid fa-campground"></i>
+                </div>
+                <p>Camping</p>
+              </a>
 
-          <div class="filter">
-            <div>
-              <i class="fa-solid fa-ship"></i>
-            </div>
-            <p>Boats</p>
-          </div> 
+              
 
-          <div class="filter">
+            <a href="/listings?category=farms" class="filter <%= selectedCategory === 'farms' ? 'active' : '' %>">
+              <div>
+                <i class="fa-solid fa-tractor"></i>
+              </div>
+              <p>Farms</p>
+            </a>
+
+            
+
+            <a href="/listings?category=arctic" class="filter <%= selectedCategory === 'arctic' ? 'active' : '' %>">
+              <div>
+                <i class="fa-solid fa-snowflake"></i>
+              </div>
+              <p>Arctic</p>
+            </a>
+
+
+
+            <a href="/listings?category=dome" class="filter <%= selectedCategory === 'dome' ? 'active' : '' %>">
+              <div>
+                <i class="fa-solid fa-igloo"></i>
+              </div>
+              <p>Dome</p>
+            </a>
+      
+            
+
+            <a href="/listings?category=boats" class="filter <%= selectedCategory === 'boats' ? 'active' : '' %>">
+              <div>
+                <i class="fa-solid fa-ship"></i>
+              </div>
+              <p>Boats</p>
+            </a>
+
+            
+
+            <a href="/listings?category=islands" class="filter <%= selectedCategory === 'islands' ? 'active' : '' %>">
             <div>
               <i class="fa-solid fa-umbrella-beach"></i>
             </div>
             <p>Islands</p>
-          </div>
+            </a>
 
-        <%# tax toggle switch  %>
+             
+
+        <!-- <%# tax toggle switch  %>
           <div class="tax-toggle">
             <div class="form-check-reverse form-switch">
               <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
               <label class="form-check-label" for="flexSwitchCheckDefault">Display total after taxes</label>
             </div>  
-          </div>
+          </div> -->
 
         </div>
+
+        <!-- RIGHT ARROW -->
+        <button class="scroll-btn right-btn">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+</div>
 
         <%# show all listings to index page %>
         <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">

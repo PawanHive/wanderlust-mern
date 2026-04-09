@@ -16,7 +16,7 @@ body {
 }
 
 .fa-compass {
-  color: #fe424d;
+  color: #fe424d !important;
   font-size: 2rem;
 }
 

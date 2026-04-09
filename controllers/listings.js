@@ -1,24 +1,64 @@
 const Listing = require("../models/listing");
+const ExpressError = require("../utils/ExpressError");
+
+
+// map geocoding part
+async function geocodeLocation(location, country) {
+  const query = [location, country].filter(Boolean).join(", ");
+
+  if (!query) {
+    return null;
+  }
+
+  const response = await fetch(
+    `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(query)}`,
+    {
+      headers: {
+        "User-Agent": "wanderlust-mern-app/1.0",
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(`Geocoding request failed with status ${response.status}`);
+  }
+
+  const results = await response.json();
+
+  if (!Array.isArray(results) || results.length === 0) {
+    return null;
+  }
+
+  const firstResult = results[0];
+  return {
+    type: "Point",
+    coordinates: [Number(firstResult.lon), Number(firstResult.lat)],
+  };
+}
 
 // Index Route - controller
 module.exports.index = async (req, res) => {
-  const { search } = req.query;
+  const { search, category } = req.query;
   // console.log(search);
-  let AllListings;
+  let filter = {};
 
+  // search filter
   if (search) {
-    AllListings = await Listing.find({
-      $or: [
+      filter.$or = [
         { title: { $regex: search, $options: "i" } },  // for title search: `$regex` → allows partial match, $options: "i" → case insensitive (Delhi = delhi)
         { location: { $regex: search, $options: "i" } },  // for location search
         { country: { $regex: search, $options: "i" } },  // for country search
-      ]
-    });
-  } else {
-    AllListings = await Listing.find({});
-  }
+      ];
+    };
+
+    // Category filter
+    if (category) {
+      filter.category = category;
+    }
+
+  const AllListings = await Listing.find(filter);
   // console.log(AllListings);
-  res.render("listings/index.ejs", { AllListings });
+  res.render("listings/index.ejs", { AllListings, selectedCategory: category });
 };
 
 // New Route - controller
@@ -36,20 +76,20 @@ module.exports.createListing = async (req, res, next) => {
   newListing.owner = req.user._id; // (Link listing to logged-in user), passport by default save user info in 'req.user'
   newListing.image = { url, filename };
 
-    try {
-    const geoResult = await maptilerClient.geocoding.forward(
+  try {
+    const geometry = await geocodeLocation(
       newListing.location,
-      { limit: 1 },
+      newListing.country,
     );
 
-    if (geoResult?.features?.length) {
-      newListing.geometry = geoResult.features[0].geometry;
+    if (geometry) {
+      newListing.geometry = geometry;
     } else {
       throw new Error(
-        "Geocoding failed: No results found for the provided location."
+        "Geocoding failed: No results found for the provided location.",
       );
     }
-  } catch(err) {
+  } catch (err) {
     console.error("Geocoding error:", err);
     throw new ExpressError(
       400,
