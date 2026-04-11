@@ -4,7 +4,8 @@ const mongoose = require("mongoose");
 const initData = require("./data");
 const Listing = require("../models/listing");
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
+// const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
+const dbUrl = process.env.ATLASDB_URL;
 
 main()
   .then(() => {
@@ -15,11 +16,11 @@ main()
   });
 
 async function main() {
-  await mongoose.connect(MONGO_URL);
+  await mongoose.connect(dbUrl);
 }
 
 const initDB = async () => {
-  await Listing.deleteMany({});
+  // await Listing.deleteMany({});
   initData.data = initData.data.map((obj) => ({
     // Add owner field to each listing while keeping existing data using map and spread
     ...obj,
