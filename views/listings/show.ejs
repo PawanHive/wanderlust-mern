@@ -8,7 +8,7 @@
 
   <div class="card listing-card">
     <div class="row">
-      <div class="col-6 offset-3">
+      <div class="col-10 offset-1">
         <h3><%= listing.title %></h3>
         <img src="<%= listing.image.url %>" class="card-img-top show-img" alt="listing_image">
         <div class="card-body">
@@ -69,26 +69,28 @@
           <% } %>
           
           <% if (listing.reviews.length > 0) { %>
-            <div class="row">
+            <div class="row g-6">
               <p><b>All Reviews:</b></p>
               <% for(review of listing.reviews) { %>
-                <div class="card  col-5 ms-3 mb-3">
-                  <div class="card-body">
-                    <h5 class="card-title"> @<%= review.author.username %></h5>
-                    <p class="starability-result" data-rating="<%= review.rating %>"></p>
-                    <p class="card-text"><%= review.comment %></p>
+                <div class="col-6 p-1">
+                  <div class="card h-100">
+                    <div class="card-body p-1">
+                      <h5 class="card-title"> @<%= review.author.username %></h5>
+                      <p class="starability-result" data-rating="<%= review.rating %>"></p>
+                      <p class="card-text"><%= review.comment %></p>
+                    </div>
+    
+                    <form class="mb-3 p-1" method="POST" action="/listings/<%=listing._id%>/reviews/<%=review._id%>?_method=DELETE">
+                      <button class="btn btn-dark btn-sm ">Delete</button>
+                    </form>
                   </div>
-  
-                  <form class="mb-3" method="POST" action="/listings/<%=listing._id%>/reviews/<%=review._id%>?_method=DELETE">
-                    <button class="btn btn-dark btn-sm">Delete</button>
-                  </form>
                 </div>
               <% } %>
             </div>
           <% } %>
         </div>
       </div>
-      <div class="col-6 offset-3 mb-3">
+      <div class="col-10 offset-1 mb-3">
         <h3>Where you'll be</h3>
         <div id="map"></div>
         </h3>
