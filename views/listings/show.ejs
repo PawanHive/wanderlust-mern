@@ -79,10 +79,12 @@
                       <p class="starability-result" data-rating="<%= review.rating %>"></p>
                       <p class="card-text"><%= review.comment %></p>
                     </div>
-    
-                    <form class="mb-3 p-1" method="POST" action="/listings/<%=listing._id%>/reviews/<%=review._id%>?_method=DELETE">
-                      <button class="btn btn-dark btn-sm ">Delete</button>
-                    </form>
+                    
+                    <% if (currUser && review.author._id.toString() === currUser._id.toString()) { %>
+                      <form class="mb-3 p-1" method="POST" action="/listings/<%=listing._id%>/reviews/<%=review._id%>?_method=DELETE">
+                        <button class="btn btn-dark btn-sm ">Delete</button>
+                      </form>
+                    <% } %>
                   </div>
                 </div>
               <% } %>
